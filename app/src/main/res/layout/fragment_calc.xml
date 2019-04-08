@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layoutColor"
+    android:id="@+id/frameLayout"
+    tools:context=".CalcFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="2dp"
+            android:background="@android:color/transparent"
+            android:hint="Type a chemical problem..."
+            android:textColorHint="@color/hintColor"
+            android:singleLine="true"
+            android:cursorVisible="true"
+            android:textColor="#000"
+            android:textCursorDrawable="@drawable/text_cursor_blue"
+            android:textSize="20sp" />
+
+        <android.inputmethodservice.KeyboardView
+            android:id="@+id/keyboard_view"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:focusable="true"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent"
+            android:keyBackground="@android:color/darker_gray"
+            android:focusableInTouchMode="true"
+            android:visibility="gone" />
+    </RelativeLayout>
+</FrameLayout>
