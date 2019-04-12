@@ -1,12 +1,16 @@
 package com.example.yuramnadzij.photochemistry;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -26,6 +30,8 @@ public class ResultFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TextView solvingHeadline;
+    private TextView solution;
 
     private OnFragmentInteractionListener mListener;
 
@@ -33,6 +39,10 @@ public class ResultFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public void setResult(String problem, String result){
+        solvingHeadline.setText(problem);
+        solution.setText(result);
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -63,8 +73,12 @@ public class ResultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_result, container, false);
+        View vw = inflater.inflate(R.layout.fragment_result, container, false);
+        solvingHeadline = (TextView) vw.findViewById(R.id.txtNoSol);
+        solution = (TextView)  vw.findViewById(R.id.solution);
+        setResult("solution steps", "result");
+        //solvingHeadline.setPaintFlags(solvingHeadline.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        return vw;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
