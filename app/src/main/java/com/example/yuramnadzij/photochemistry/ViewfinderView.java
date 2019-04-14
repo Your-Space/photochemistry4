@@ -8,10 +8,13 @@ import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+
+import static android.support.constraint.Constraints.TAG;
 
 public final class ViewfinderView extends View implements View.OnTouchListener {
 
@@ -31,7 +34,6 @@ public final class ViewfinderView extends View implements View.OnTouchListener {
 
     public ViewfinderView(Context context) {
         super(context);
-
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         maskColor = Color.argb(20, 0, 0, 0);
         frameColor = Color.LTGRAY;
@@ -44,6 +46,7 @@ public final class ViewfinderView extends View implements View.OnTouchListener {
         screenResolution = new Point(width, height);
         calcFramingRect();
     }
+
 
     public ViewfinderView(Context context, AttributeSet attrs)
     {
@@ -154,16 +157,18 @@ public final class ViewfinderView extends View implements View.OnTouchListener {
             } else if (width > MAX_FRAME_WIDTH) {
                 width = MAX_FRAME_WIDTH;
             }
-            int height = screenResolution.y * 1 / 9;
+            int height = screenResolution.y / 9;
             if (height < MIN_FRAME_HEIGHT) {
                 height = MIN_FRAME_HEIGHT;
             } else if (height > MAX_FRAME_HEIGHT) {
                 height = MAX_FRAME_HEIGHT;
             }
+            Log.d(TAG, "wiwdth: "+ width + "sdf + " + height );
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 5;
             frame = new Rect(leftOffset, topOffset, leftOffset + width,
                     topOffset + height);
+
         }
     }
 

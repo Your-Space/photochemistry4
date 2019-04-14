@@ -10,27 +10,32 @@ public class Balance extends  ChemicalReaction {
     private ChemicalElement[] sSide;
     private ChemicalElement[] forChecking;
     private ChemicalElement[] forCheckingAn;
-   // private boolean cannotBalance;
+    private boolean cannotBalance;
 
     Balance(ChemicalReaction reaction){
         this.reaction = reaction;
-     //   cannotBalance = false;
+        cannotBalance = false;
         reaction.setReaction(startBalanceTheReaction());
     }
 
-    private boolean checkTheBalance(){
+    Balance(ChemicalReaction reaction, boolean n){
+        this.reaction = reaction;
+        getConstantLost();
+        reaction.setReaction(createBalancedReaction(this.reaction.oneSide, this.reaction.anotherSide));
+    }
+
+    private boolean checkTheBalance() {
 //      first side
         int numberOfElOnSide = 0;
-        for (int i = 0; i < reaction.oneSide.length; i++){
+        for (int i = 0; i < reaction.oneSide.length; i++) {
             numberOfElOnSide += reaction.oneSide[i].getCountOfElements();
         }
         fSide = new ChemicalElement[numberOfElOnSide];
         for (int i = 0; i < numberOfElOnSide; i++)
             fSide[i] = new ChemicalElement();
-        for (int i = 0; i < numberOfElOnSide; i++){
-            for(int j = 0; j < reaction.oneSide.length; j++)
-            {
-                for(int k = 0; k < reaction.oneSide[j].getCountOfElements(); k++){
+        for (int i = 0; i < numberOfElOnSide; i++) {
+            for (int j = 0; j < reaction.oneSide.length; j++) {
+                for (int k = 0; k < reaction.oneSide[j].getCountOfElements(); k++) {
                     fSide[i].setElement(reaction.oneSide[j].getElements()[k].getElement());
                     fSide[i].setIndex(reaction.oneSide[j].getElements()[k].getIndex());
                     i++;
@@ -41,29 +46,33 @@ public class Balance extends  ChemicalReaction {
         forChecking = new ChemicalElement[1];
         forChecking[0] = new ChemicalElement();
         boolean gotIt;
-        for(int i = 0; i < numberOfElOnSide; i++){
-            if(fSide[i].getIndex() == -3) continue;
-            gotIt = false;
-            for(int j = 0; j < numberOfElOnSide; j++){
-                if(i == j) continue;
-                if(fSide[j].getIndex() == -3) continue;
-                if(i == 0 && !gotIt) {
-                    forChecking[i] = fSide[i];
-                    gotIt = true;
-                }
-                if(!gotIt && i != 0){
-                    forChecking = Arrays.copyOf(forChecking, forChecking.length + 1);
-                    forChecking[forChecking.length - 1] = fSide[i];
-                    gotIt = true;
-                }
-                if(fSide[i].getElement().equals(fSide[j].getElement())){
-                    forChecking[forChecking.length - 1].setIndex(forChecking[forChecking.length - 1].getIndex()
-                            + fSide[j].getIndex());
-                    fSide[j].setIndex(-3);
+        if (fSide.length == 1) {
+            forChecking[0].setElement(fSide[0].getElement());
+            forChecking[0].setIndex(fSide[0].getIndex());
+        } else {
+            for (int i = 0; i < numberOfElOnSide; i++) {
+                if (fSide[i].getIndex() == -3) continue;
+                gotIt = false;
+                for (int j = 0; j < numberOfElOnSide; j++) {
+                    if (i == j) continue;
+                    if (fSide[j].getIndex() == -3) continue;
+                    if (i == 0 && !gotIt) {
+                        forChecking[i] = fSide[i];
+                        gotIt = true;
+                    }
+                    if (!gotIt && i != 0) {
+                        forChecking = Arrays.copyOf(forChecking, forChecking.length + 1);
+                        forChecking[forChecking.length - 1] = fSide[i];
+                        gotIt = true;
+                    }
+                    if (fSide[i].getElement().equals(fSide[j].getElement())) {
+                        forChecking[forChecking.length - 1].setIndex(forChecking[forChecking.length - 1].getIndex()
+                                + fSide[j].getIndex());
+                        fSide[j].setIndex(-3);
+                    }
                 }
             }
         }
-
 //          first side
 
 //          second side
@@ -88,31 +97,36 @@ public class Balance extends  ChemicalReaction {
         forCheckingAn = new ChemicalElement[1];
         forCheckingAn[0] = new ChemicalElement();
         boolean gotItt;
-        for(int i = 0; i < numberOfElAnSide; i++){
-            if(sSide[i].getIndex() == -3) continue;
-            gotItt = false;
-            for(int j = 0; j < numberOfElAnSide; j++){
-                if(i == j) continue;
-                if(sSide[j].getIndex() == -3) continue;
-                if(i == 0 && !gotItt) {
-                    forCheckingAn[i] = sSide[i];
-                    gotItt = true;
-                }
-                if(!gotItt && i != 0){
-                    forCheckingAn = Arrays.copyOf(forCheckingAn, forCheckingAn.length + 1);
-                    forCheckingAn[forCheckingAn.length - 1] = sSide[i];
-                    gotItt = true;
-                }
-                if(sSide[i].getElement().equals(sSide[j].getElement())){
-                    forCheckingAn[forCheckingAn.length - 1].setIndex(forCheckingAn[forCheckingAn.length - 1].getIndex()
-                            + sSide[j].getIndex());
-                    sSide[j].setIndex(-3);
+        if (sSide.length == 1) {
+            forCheckingAn[0].setElement(sSide[0].getElement());
+            forCheckingAn[0].setIndex(sSide[0].getIndex());
+        } else {
+            for (int i = 0; i < numberOfElAnSide; i++) {
+                if (sSide[i].getIndex() == -3) continue;
+                gotItt = false;
+                for (int j = 0; j < numberOfElAnSide; j++) {
+                    if (i == j) continue;
+                    if (sSide[j].getIndex() == -3) continue;
+                    if (i == 0 && !gotItt) {
+                        forCheckingAn[i] = sSide[i];
+                        gotItt = true;
+                    }
+                    if (!gotItt && i != 0) {
+                        forCheckingAn = Arrays.copyOf(forCheckingAn, forCheckingAn.length + 1);
+                        forCheckingAn[forCheckingAn.length - 1] = sSide[i];
+                        gotItt = true;
+                    }
+                    if (sSide[i].getElement().equals(sSide[j].getElement())) {
+                        forCheckingAn[forCheckingAn.length - 1].setIndex(forCheckingAn[forCheckingAn.length - 1].getIndex()
+                                + sSide[j].getIndex());
+                        sSide[j].setIndex(-3);
+                    }
                 }
             }
         }
 ////////////////////////////////////
         if(forChecking.length != forCheckingAn.length) {
-            //cannotBalance = true;
+            cannotBalance = true;
             return false;
         }
         else{
@@ -124,10 +138,13 @@ public class Balance extends  ChemicalReaction {
                         similar = true;
                         break;
                     }
-                    else similar = false;
+                    else {
+                        similar = false;
+                       // if(j + 1 == forCheckingAn.length) cannotBalance = true;
+                    }
                 }
                 if(!similar) {
-                   // cannotBalance = true;
+                 //   cannotBalance = true;
                     return false;
                 }
             }
@@ -135,7 +152,7 @@ public class Balance extends  ChemicalReaction {
         return true;
     }
 
-    private void getConstantLost(){
+        public void getConstantLost(){
         for(int i = 0; i < reaction.oneSide.length; i++){
                 boolean ch = false;
                 String newSide = "";
@@ -209,10 +226,10 @@ public class Balance extends  ChemicalReaction {
         if(checkTheBalance()){
             return reaction.getReaction();
         }
-        //if(cannotBalance) return reaction.getReaction();
+        if(cannotBalance) return "Cannot solve this proble yet";
         getConstantLost();
         if(checkTheBalance()){
-            return reaction.getReaction();
+            return createBalancedReaction(reaction.oneSide, reaction.anotherSide);
         }
         int pos, el, sk, pos1, el1, sk1;
         boolean ch;
@@ -241,6 +258,17 @@ public class Balance extends  ChemicalReaction {
                             if((fSide[i].getIndex() % 2 == 1 && reaction.oneSide[pos1].getElements()[sk1].getIndex()/reaction.oneSide[pos1].getConstant() != 1)
                                     || fSide[i].getIndex() < (reaction.oneSide[pos1].getElements()[sk1].getIndex()/reaction.oneSide[pos1].getConstant())){
                                 if(sSide.length >= 1 && sSide[0].getIndex() != 0) break;
+                                if(reaction.oneSide[pos1].getElements().length == 1 && fSide[i].getIndex() % 2 == 1){
+                                    for(int s = 0; s < reaction.oneSide.length; s++){
+                                        reaction.oneSide[s].setConstant(reaction.oneSide[s].getConstant()*2);
+                                    }
+                                    for(int s = 0; s < reaction.anotherSide.length; s++){
+                                        reaction.anotherSide[s].setConstant(reaction.anotherSide[s].getConstant()*2);
+                                    }
+                                    i = fSide.length;
+                                    ch = true;
+                                    break;
+                                }
                                 int Number = 0;
                                 for (int d = 0; d < reaction.anotherSide.length; d++){
                                     for(int f = 0; f < reaction.anotherSide[d].getElements().length; f++) {
@@ -267,6 +295,8 @@ public class Balance extends  ChemicalReaction {
                     }
                 }
             }
+            //CaCl2+Na3PO4=Ca3(PO4)2+NaCl
+            //Mg(OH)2+HCl=MgCl2+H2O
             if(sSide[0].getIndex() != 0 && !ch) {
                 for (int i = 0; i < sSide.length; i++) {
                     for (int j = 0; j < reaction.anotherSide.length; j++) {
@@ -283,6 +313,16 @@ public class Balance extends  ChemicalReaction {
                             if((sSide[i].getIndex() % 2 == 1 &&
                                     reaction.anotherSide[pos].getElements()[sk].getIndex()/reaction.anotherSide[pos].getConstant() != 1)
                                     || sSide[i].getIndex() < (reaction.anotherSide[pos].getElements()[sk].getIndex()/reaction.anotherSide[pos].getConstant())) {
+                                if(reaction.anotherSide[pos].getElements().length == 1 && sSide[i].getIndex() % 2 == 1){
+                                    for(int s = 0; s < reaction.oneSide.length; s++){
+                                        reaction.oneSide[s].setConstant(reaction.oneSide[s].getConstant()*2);
+                                    }
+                                    for(int s = 0; s < reaction.anotherSide.length; s++){
+                                        reaction.anotherSide[s].setConstant(reaction.anotherSide[s].getConstant()*2);
+                                    }
+                                    i = sSide.length;
+                                    break;
+                                }
                                 int Number = 0;
                                 for (int d = 0; d < reaction.oneSide.length; d++){
                                     for(int f = 0; f < reaction.oneSide[d].getElements().length; f++) {

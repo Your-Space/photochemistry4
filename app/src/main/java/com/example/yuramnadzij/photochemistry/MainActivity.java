@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 
@@ -17,7 +19,8 @@ public class MainActivity extends AppCompatActivity implements CameraFragment.On
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private TabLayout tabLayout;
-    private String result;
+    private String result = "";
+    private boolean isVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +28,10 @@ public class MainActivity extends AppCompatActivity implements CameraFragment.On
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        tabLayout.addTab(tabLayout.newTab().setText("Calculator"));
+        tabLayout.addTab(tabLayout.newTab().setText("Camera"));
+        tabLayout.addTab(tabLayout.newTab().setText("Result"));
+        //tabLayout.addTab(tabLayout.newTab().setText("History"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setScrollPosition(1,0f,true);
 
@@ -37,24 +41,34 @@ public class MainActivity extends AppCompatActivity implements CameraFragment.On
         viewPager.setCurrentItem(1);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(tabSelectedListener);
-
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(1).setIcon(R.drawable.camera);
+        tabLayout.getTabAt(0).setIcon(R.drawable.calc);
+        tabLayout.getTabAt(2).setIcon(R.drawable.folder);
+        Window window = this.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(this.getResources().getColor(R.color.layoutColor));
     }
 
     public void setResult(String result){
-        /*String solution = "Solution steps";
-        //((ResultFragment)pagerAdapter.getItem(2)).setResult(solution , result);
-        ResultFragment resultFragment = new ResultFragment();
-        resultFragment.setResult(solution, result);*/
+        this.result = result;
+    }
 
-        viewPager.setCurrentItem(2);
+    public void setIsVisible(boolean isVisible){
+        this.isVisible = isVisible;
+    }
+
+    public boolean getIsVisible(){
+        return isVisible;
     }
 
     public String getResult(){
         return result;
     }
 
-    public ViewPager getViewPager(){
-        return viewPager;
+    public void setFragmentToShow(int i){
+        viewPager.setCurrentItem(i);
     }
 
     public TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener(){
@@ -78,19 +92,4 @@ public class MainActivity extends AppCompatActivity implements CameraFragment.On
     public void onFragmentInteraction(Uri uri) {
 
     }
-
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_DEL:
-            {
-                Toast.makeText(this, "Cursor position 1 / ", Toast.LENGTH_LONG).show();
-                ((CalcFragment)pagerAdapter.getItem(0)).backspace();
-                return true;
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-*/
 }

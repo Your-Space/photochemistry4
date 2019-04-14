@@ -6,107 +6,66 @@
     android:background="@color/layoutColor"
     android:id="@+id/frameLayout"
     tools:context=".CalcFragment">
-
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <EditText
             android:id="@+id/editText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:background="@android:color/transparent"
-            android:cursorVisible="true"
-            android:hint="Type a chemical problem..."
-            android:inputType="textCapCharacters"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
             android:paddingStart="0dp"
             android:paddingEnd="2dp"
-            android:singleLine="true"
-            android:textColor="#000"
+            android:background="@android:color/transparent"
+            android:hint="Type a chemical problem..."
             android:textColorHint="@color/hintColor"
+            android:singleLine="true"
+            android:cursorVisible="true"
+            android:textColor="@android:color/white"
             android:textCursorDrawable="@drawable/text_cursor_blue"
             android:textSize="20sp" />
 
-        <!--/*<android.inputmethodservice.KeyboardView
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/round_corners"
+            android:src="@mipmap/start_ec_round"
+            android:visibility="invisible"
+            android:id="@+id/crossButton"/>
+        <android.inputmethodservice.KeyboardView
             android:id="@+id/keyboard_view"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="wrap_content"
+            android:focusable="true"
             android:layout_alignParentBottom="true"
             android:background="@android:color/transparent"
-            android:focusable="true"
+            android:keyBackground="@color/keyboardColor"
             android:focusableInTouchMode="true"
-            android:keyBackground="@android:color/darker_gray"
-            android:visibility="gone" />*/-->
-
+            android:visibility="gone" />
         <Button
+            android:layout_above="@id/keyboard_view"
             android:id="@+id/btn_fragment_result"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="50dp"
-            android:background="#03E1DA"
+            android:layout_marginBottom="20dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/btnColor"
+            android:gravity="center_vertical|start"
+            android:textStyle="bold"
             android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/control_layout"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:background="@android:color/darker_gray"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:weightSum="5">
-
-            <Button
-                android:id="@+id/equal"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="#95000000"
-                android:textColor="@android:color/white"
-                android:text="=" />
-
-            <Button
-                android:id="@+id/balance"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="#95000000"
-                android:textColor="@android:color/white"
-                android:text="balance" />
-
-            <Button
-                android:id="@+id/moveLeft"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="#95000000"
-                android:textColor="@android:color/white"
-                android:text="←" />
-
-            <Button
-                android:id="@+id/moveRigth"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="#95000000"
-                android:textColor="@android:color/white"
-                android:text="→" />
-
-            <Button
-                android:id="@+id/delete"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="#95000000"
-                android:textColor="@android:color/white"
-                android:text="del" />
-        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>

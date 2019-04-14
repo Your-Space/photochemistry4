@@ -6,20 +6,26 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -51,6 +57,7 @@ public class CameraFragment extends Fragment {
     private CameraSource cameraSource;
     private ViewfinderView vfw;
     private RelativeLayout relativeLayout;
+    private Button button;
 
     final int RequestCameraPermissionID = 1001;
 
@@ -87,20 +94,28 @@ public class CameraFragment extends Fragment {
         textView = (TextView) vw.findViewById(R.id.text_view);
         relativeLayout = (RelativeLayout) vw.findViewById(R.id.relativeLayout);
         vfw = (ViewfinderView) vw.findViewById(R.id.vfw);
+        button = vw.findViewById(R.id.btn_fragment_res);
+
         vfw.setOnTouchListener(vfw);
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getActivity().getApplicationContext()).build();
+        BoxDetector boxDetector = new BoxDetector(textRecognizer, vfw.getFramingRect());
+        //boxDetector.setProcessor(textRecognizer.setProcessor());
         if(!textRecognizer.isOperational()){
             Log.w("MainActivity", "Detector not loaded yet");
         } else {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            int width = displayMetrics.widthPixels;
-            int height = displayMetrics.heightPixels;
-            cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
+            WindowManager manager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = manager.getDefaultDisplay();
+            int width = display.getWidth();
+            int height = display.getHeight();
+            cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), boxDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedPreviewSize(1280, 1024)
+                    .setRequestedPreviewSize(1280, 720)
+                    //.setRequestedPreviewSize(640, 480)
+                    //.setRequestedPreviewSize(width, height)
                     .setAutoFocusEnabled(true)
-                    .setRequestedFps(2.0f)
+                    .setRequestedFps(30.0f)
                     .build();
             cameraView.getHolder().addCallback(new SurfaceHolder.Callback(){
                 @Override
@@ -108,7 +123,6 @@ public class CameraFragment extends Fragment {
                     try{
                         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
                                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
                             ActivityCompat.requestPermissions(getActivity(),
                                     new String[]{Manifest.permission.CAMERA},
                                     RequestCameraPermissionID);
@@ -129,7 +143,7 @@ public class CameraFragment extends Fragment {
                 }
             });
 
-            textRecognizer.setProcessor(new Detector.Processor<TextBlock>(){
+            boxDetector.setProcessor(new Detector.Processor<TextBlock>(){
                 @Override
                 public void release(){}
 
@@ -155,7 +169,24 @@ public class CameraFragment extends Fragment {
                 }
             });
         }
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).setFragmentToShow(2);
+            }
+        });
         return vw;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(((MainActivity)getActivity()).getIsVisible()){
+            Toast.makeText(getActivity(), "Cursor position 1 / ", Toast.LENGTH_LONG).show();
+            button.setVisibility(View.VISIBLE);
+            button.setText(((MainActivity)getActivity()).getResult());
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

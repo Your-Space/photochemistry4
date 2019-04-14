@@ -36,6 +36,7 @@ public class ChemicalFormula {
     public void setChemicalElements(){
         if(isChild)
             countOfElements = 0;
+        countOfElements = 0;
         for(int i = 0; i < formula.length(); i++)
             if(isUpperCase(formula.charAt(i)) && isLetter(formula.charAt(i))) {
                 countOfElements++;
@@ -160,8 +161,8 @@ public class ChemicalFormula {
         }
         if(constant != 1)
             formula = constant + form;
+        //System.out.println(formula);
         setChemicalElements();
         setChemicalElementsFormulaAndIndex();
     }
-
 }

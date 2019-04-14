@@ -7,14 +7,14 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.ActionMode;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,15 +23,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
 
 /**
@@ -55,10 +51,10 @@ public class CalcFragment extends Fragment {
     private FrameLayout frameLayout;
     private Keyboard keyboard;
     private Button button;
+    private ImageButton crossButton;
     private KeyboardView keyboardView;
-    private Button[] buttonControl;
-    private LinearLayout relativeLayout;
     public int cursorPosition = 0;
+    private boolean caps = true;
 
     private OnFragmentInteractionListener mListener;
 
@@ -99,47 +95,35 @@ public class CalcFragment extends Fragment {
         View vw = inflater.inflate(R.layout.fragment_calc, container, false);
         editText = (EditText) vw.findViewById(R.id.editText);
         frameLayout = (FrameLayout) vw.findViewById(R.id.frameLayout);
-        button = (Button) vw.findViewById(R.id.btn_fragment_result);
-        relativeLayout = vw.findViewById(R.id.control_layout);
-        buttonControl = new Button[5];
-        buttonControl[0] = vw.findViewById(R.id.equal);
-        buttonControl[1] = vw.findViewById(R.id.balance);
-        buttonControl[2] = vw.findViewById(R.id.moveLeft);
-        buttonControl[3] = vw.findViewById(R.id.moveRigth);
-        buttonControl[4] = vw.findViewById(R.id.delete);
-        buttonControl[1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                balance();
-            }
-        });
-        buttonControl[2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveLeft();
-            }
-        });
-        buttonControl[3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveRight();
-            }
-        });
-        buttonControl[4].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backspace();
-            }
-        });
 
-
+        keyboardView = (KeyboardView) vw.findViewById(R.id.keyboard_view);
+        keyboardView.setPreviewEnabled(false);
+        keyboard = new Keyboard(getContext(), R.xml.keyboard);
+        keyboard.setShifted(caps);
+        keyboardView.setKeyboard(keyboard);
+        keyboardView.setOnKeyboardActionListener(keyboardActionListener);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         editText.setShowSoftInputOnFocus(false);
-
+        button = (Button) vw.findViewById(R.id.btn_fragment_result);
         editText.setOnFocusChangeListener(focusChangeListener);
         editText.setOnClickListener(eClickListener);
         frameLayout.setOnClickListener(fClickListener);
+        crossButton = vw.findViewById(R.id.crossButton);
 
+        crossButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText.setText("");
+                crossButton.setVisibility(View.INVISIBLE);
+            }
+        });
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).setFragmentToShow(2);
+            }
+        });
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -152,6 +136,12 @@ public class CalcFragment extends Fragment {
                 editText.setHint("");
                 if(editText.getText().toString().length() == 0)
                     editText.setHint("Type a chemical problem...");
+                if(button.getVisibility() == View.VISIBLE) {
+                    button.setVisibility(View.GONE);
+                 //   ((MainActivity)getActivity()).setIsVisible(false);
+                }
+                if(!editText.getText().equals("")) crossButton.setVisibility(View.VISIBLE);
+                else crossButton.setVisibility(View.GONE);
             }
 
             @Override
@@ -185,6 +175,11 @@ public class CalcFragment extends Fragment {
         return vw;
     }
 
+    /*@Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(((MainActivity)getActivity()).getIsVisible()) button.setVisibility(View.VISIBLE);
+    }*/
 
     public EditText.OnFocusChangeListener focusChangeListener = new EditText.OnFocusChangeListener(){
         @Override
@@ -195,6 +190,7 @@ public class CalcFragment extends Fragment {
                 editText.requestFocus();
                 showCustomKeyboard(editText);
                 editText.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.edit_text_design));
+
             }
         }
     };
@@ -220,7 +216,7 @@ public class CalcFragment extends Fragment {
                 editText.clearFocus();
                 editText.setFocusable(false);
                 editText.setFocusableInTouchMode(false);
-                hideCustomKeyboard(editText);
+                hideCustomKeyboard();
                 editText.setCursorVisible(true);
                 editText.setBackgroundColor(Color.TRANSPARENT);
             } else {
@@ -234,23 +230,97 @@ public class CalcFragment extends Fragment {
     };
 
 
-    public Button.OnClickListener clickListener = new Button.OnClickListener(){
+    public KeyboardView.OnKeyboardActionListener keyboardActionListener = new KeyboardView.OnKeyboardActionListener() {
         @Override
-        public void onClick(View v) {
-            ((MainActivity)getActivity()).setResult(button.getText().toString());
+        public void onPress(int primaryCode) { }
+        @Override
+        public void onRelease(int primaryCode) { }
+        @Override
+        public void onKey(int primaryCode, int[] keyCodes) {
+            InputConnection ic = editText.onCreateInputConnection(new EditorInfo());
+            if (ic == null) return;
+            switch (primaryCode) {
+                case Keyboard.KEYCODE_SHIFT:
+                    caps = !caps;
+                    keyboard.setShifted(caps);
+                    keyboardView.invalidateAllKeys();
+                    break;
+                case -100:
+                    ChemicalReaction chemicalReaction = new ChemicalReaction();
+                    chemicalReaction.setReaction(editText.getText().toString());
+                    chemicalReaction.setStart();
+                    chemicalReaction.setEnd();
+                    chemicalReaction.setSides();
+                    chemicalReaction.setSidesFormulas();
+                    Balance b = new Balance(chemicalReaction);
+                    button.setText(chemicalReaction.getReaction());
+                    button.setVisibility(View.VISIBLE);
+                    ((MainActivity)getActivity()).setIsVisible(true);
+                    ((MainActivity)getActivity()).setResult(button.getText().toString());
+                    break;
+                case Keyboard.KEYCODE_DELETE:
+                    CharSequence selectedText = ic.getSelectedText(0);
+                    if (TextUtils.isEmpty(selectedText)) {
+                        // no selection, so delete previous character
+                        ic.deleteSurroundingText(1, 0);
+                        if(cursorPosition != 0) cursorPosition--;
+                    } else {
+                        // delete the selection
+                        ic.commitText("", 1);
+                        cursorPosition = editText.getSelectionStart();
+                        editText.setSelection(cursorPosition);
+                    }
+                    break;
+                case -12:
+                    if(cursorPosition < editText.getText().toString().length()) {
+                        cursorPosition++;
+                        editText.setSelection(cursorPosition);
+                        // Toast.makeText(getActivity(), "Cursor position " + cursorPosition, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case -13:
+                    if(cursorPosition > 0) {
+                        cursorPosition--;
+                        editText.setSelection(cursorPosition);
+                        //  Toast.makeText(getActivity(), "Cursor position 1 / " + cursorPosition, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                default:
+                    char code = (char) primaryCode;
+                    if(Character.isLetter(code) && caps){
+                        code = Character.toUpperCase(code);
+                    }
+                    cursorPosition++;
+                    ic.commitText(String.valueOf(code), 1);
+                    if(!caps) {
+                        caps = true;
+                        keyboard.setShifted(caps);
+                    }
+            }
         }
+        @Override
+        public void onText(CharSequence text) { }
+        @Override
+        public void swipeLeft() { }
+        @Override
+        public void swipeRight() { }
+        @Override
+        public void swipeDown() { }
+        @Override
+        public void swipeUp() { }
     };
 
-    public void hideCustomKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        relativeLayout.setVisibility(View.GONE);
+    public void hideCustomKeyboard() {
+        keyboardView.setVisibility(View.GONE);
+        keyboardView.setEnabled(false);
+        if(((MainActivity)getActivity()).getIsVisible()) button.setVisibility(View.VISIBLE);
     }
     public void showCustomKeyboard( View v) {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
-        relativeLayout.setVisibility(View.VISIBLE);
-        //if( v!=null)((InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);
+        keyboardView.setVisibility(View.VISIBLE);
+        keyboardView.setEnabled(true);
+        if( v!=null ){
+            ((InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -292,49 +362,4 @@ public class CalcFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-
-    public void backspace(){
-        InputConnection ic = editText.onCreateInputConnection(new EditorInfo());
-        CharSequence selectedText = ic.getSelectedText(0);
-        if (TextUtils.isEmpty(selectedText)) {
-            // no selection, so delete previous character
-            ic.deleteSurroundingText(1, 0);
-            if(cursorPosition != 0) cursorPosition--;
-        } else {
-            // delete the selection
-            ic.commitText("", 1);
-            cursorPosition = editText.getSelectionStart();
-            editText.setSelection(cursorPosition);
-        }
-        Toast.makeText(getActivity(), "Cursor position 1 / " + cursorPosition, Toast.LENGTH_LONG).show();
-    }
-
-    public void balance(){
-        ChemicalReaction chemicalReaction = new ChemicalReaction();
-        chemicalReaction.setReaction(editText.getText().toString());
-        chemicalReaction.setStart();
-        chemicalReaction.setEnd();
-        chemicalReaction.setSides();
-        chemicalReaction.setSidesFormulas();
-        Balance b = new Balance(chemicalReaction);
-        button.setText(chemicalReaction.getReaction());
-        button.setVisibility(View.VISIBLE);
-        button.setOnClickListener(clickListener);
-    }
-
-    public void moveRight(){
-        if(cursorPosition < editText.getText().toString().length()) {
-            cursorPosition++;
-            editText.setSelection(cursorPosition);
-            // Toast.makeText(getActivity(), "Cursor position " + cursorPosition, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void moveLeft(){
-        if(cursorPosition > 0) {
-            cursorPosition--;
-            editText.setSelection(cursorPosition);
-            //  Toast.makeText(getActivity(), "Cursor position 1 / " + cursorPosition, Toast.LENGTH_LONG).show();
-        }
-    }
 }

@@ -4,10 +4,15 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -30,8 +35,10 @@ public class ResultFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private LinearLayout relativeLayout;
     private TextView solvingHeadline;
     private TextView solution;
+    private TextView result;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,11 +81,54 @@ public class ResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vw = inflater.inflate(R.layout.fragment_result, container, false);
+
+        relativeLayout = vw.findViewById(R.id.relativveLayout);
         solvingHeadline = (TextView) vw.findViewById(R.id.txtNoSol);
         solution = (TextView)  vw.findViewById(R.id.solution);
-        setResult("solution steps", "result");
-        //solvingHeadline.setPaintFlags(solvingHeadline.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        result = (TextView)  vw.findViewById(R.id.btn_result);
+        boolean big = false;
+        solution.setOnClickListener(new View.OnClickListener() {
+            boolean big = false;
+            @Override
+            public void onClick(View v) {
+                if(solution.getText().toString().equals("No chemical problem scanned or entered"))
+                   return;
+                else{
+                    if (big) {
+                        final float scale = getContext().getResources().getDisplayMetrics().density;
+                        int pixels = (int) (20 * scale + 0.5f);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                 solution.getHeight() - solvingHeadline.getHeight());
+                        params.setMargins(pixels, 0, pixels, 0);
+                        solution.setLayoutParams(params);
+                        big = false;
+                        return;
+                    }
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                            solvingHeadline.getHeight() + solution.getHeight());
+                    params.setMargins(0, 0, 0, 0);
+                    solution.setLayoutParams(params);
+                    big = true;
+                }
+            }
+        });
         return vw;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(((MainActivity)getActivity()).getIsVisible()){
+            solvingHeadline.setText("Solution steps");
+            solution.setText(((MainActivity) getActivity()).getResult());
+            result.setVisibility(View.VISIBLE);
+            result.setText(((MainActivity) getActivity()).getResult());
+        } else {
+            solvingHeadline.setText("No Solution");
+            solution.setText("No chemical problem scanned or entered");
+            result.setVisibility(View.INVISIBLE);
+            result.setText("");
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -62,7 +62,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="99" />
+                                                <entry key="scalingPercent" value="106" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -84,11 +84,11 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="000000" />
+                                      <entry key="backgroundColor" value="25292a" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="C:\Users\Yura Mnadzij\Pictures\PHOTO (2).png" />
-                                      <entry key="foregroundLayerName" value="ic_launcher_startec" />
-                                      <entry key="outputName" value="start_ec" />
+                                      <entry key="foregroundImage" value="C:\Users\Yura Mnadzij\Downloads\folder.png" />
+                                      <entry key="foregroundLayerName" value="folder_c" />
+                                      <entry key="outputName" value="folder" />
                                     </map>
                                   </option>
                                 </PersistentState>

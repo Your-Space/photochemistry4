@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="cursorColor">#0081E6</color>
-    <color name="layoutColor">#EEEEEE</color>
+    <color name="layoutColor">#181C1B</color>
     <color name="hintColor">#85888B</color>
+    <color name="buttonColor">#53B1F0</color>
+    <color name="keyboardColor">#25292A</color>
+    <color name="higherRowColor">#252C32</color>
+    <color name="btnColor">#6490B1</color>
 </resources>

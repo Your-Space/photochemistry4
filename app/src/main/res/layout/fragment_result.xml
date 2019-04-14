@@ -11,16 +11,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/relativveLayout"
         android:orientation="vertical"
         android:weightSum="8">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:background="@android:color/white"
-            android:layout_marginTop="50dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp">
 
             <TextView
             android:id="@+id/txtNoSol"
@@ -28,22 +21,46 @@
             android:layout_height="50dp"
             android:text="No Solution"
             android:textSize="20sp"
+                android:layout_marginTop="50dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
             android:gravity="center_vertical"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
+                android:textColor="@android:color/white"
+                android:background="@drawable/edit_text_design"
             />
             <TextView
                 android:id="@+id/solution"
                 android:layout_below="@id/txtNoSol"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@color/higherRowColor"
                 android:text="No chemical problem scanned or entered"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
                 android:paddingStart="30dp"
                 android:paddingEnd="30dp"
                 />
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/btn_result"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="50dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:background="@color/btnColor"
+            android:gravity="center_vertical|start"
+            android:textStyle="bold"
+            android:visibility="invisible" />
     </LinearLayout>
 
 </FrameLayout>

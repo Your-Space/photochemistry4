@@ -28,6 +28,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 2:
                 ResultFragment resultFragment = new ResultFragment();
                 return resultFragment;
+            /*case 3:
+                HistoryFragment historyFragment = new HistoryFragment();
+                return historyFragment;*/
             default:
                 return null;
         }

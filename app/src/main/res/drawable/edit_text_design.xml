@@ -4,7 +4,7 @@
         <shape>
             <stroke
                 android:width="2dp"
-                android:color="#000"
+                android:color="@android:color/white"
                 android:dashWidth="2dp"
                 android:dashGap="2dp"/>
             <padding android:left="0dp" android:top="0dp"
@@ -14,7 +14,7 @@
 
     <item>
         <shape>
-            <solid android:color="@android:color/white" />
+            <solid android:color="@color/keyboardColor" />
         </shape>
     </item>
 
